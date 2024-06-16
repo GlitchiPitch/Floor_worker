@@ -1,0 +1,93 @@
+local modules = game.ServerScriptService.Modules
+local utils = require(modules.Utils)
+
+local data: {
+	colorLevelValue: number,
+	colorLevelTileSize: number,
+	soundEvent: RemoteEvent,
+	bindEvent: BindableEvent,
+}
+
+local colorLevels: {
+	[Model]: {
+		bar: BasePart,
+		gate: BasePart,
+		spawner: BasePart,
+		button: BasePart,
+		colorLevel: IntValue,
+	}
+} = {}
+
+function changeColorLevel(bar, index)
+	
+	utils.tween(bar, {
+		Size = bar.Size + Vector3.new(0, data.colorLevelTileSize * index, 0),
+		Position = bar.Position + Vector3.new(0, data.colorLevelTileSize / 2 * index, 0)
+	})
+end
+
+function colorGateTouched(hit: BasePart, gateColor: BrickColor, model: Model)
+	local bar = colorLevels[model]
+	local colorLevel: IntValue = bar.colorLevel
+	if hit.BrickColor == gateColor then
+		if colorLevel.Value < 10 then
+			hit:Destroy()
+			changeColorLevel(bar.bar, 1)
+			colorLevel.Value += 1
+		end
+	end
+end
+
+function createColorTool(button)
+	local tool = game.ServerStorage.Tool:Clone()
+	tool.Parent = workspace
+	tool.Handle.BrickColor = button.BrickColor
+	tool.Handle.Position = button.Position
+end
+
+function takeColorForConveyor(button, model: Model)
+	local bar = colorLevels[model]
+	local colorLevel: IntValue = bar.colorLevel
+	if colorLevel.Value > 0 then
+		--level.BrickColor = button.BrickColor
+		data.bindEvent:Fire('changeLiquidColor', button.BrickColor)
+		changeColorLevel(bar.bar, -1)
+		colorLevel.Value -= 1
+	end
+end
+
+function setupColorLevels()
+	for model, items in colorLevels do
+		items.gate.Touched:Connect(function(hit)
+			colorGateTouched(hit, items.gate.BrickColor, model)
+		end)
+		
+		items.spawner:FindFirstChildOfClass('ClickDetector').MouseClick:Connect(function()
+			createColorTool(items.spawner)
+		end)
+		
+		items.button:FindFirstChildOfClass('ClickDetector').MouseClick:Connect(function()
+			takeColorForConveyor(items.button, model)
+		end)
+	end
+end
+
+function init(colorLevelsFolder: Folder, data_)
+	data = data_
+	for i, colorLevelModel in colorLevelsFolder:GetChildren() do
+		colorLevels[colorLevelModel] = {
+			bar = colorLevelModel:FindFirstChild('Bar'),
+			gate = colorLevelModel:FindFirstChild('Gate'),
+			spawner = colorLevelModel:FindFirstChild('Spawner'),
+			button = colorLevelModel:FindFirstChild('Button'),
+			colorLevel = colorLevelModel:FindFirstChild('ColorLevel'),
+		}
+	end
+	
+	setupColorLevels()
+	
+end
+
+return {
+	init = init,
+}
