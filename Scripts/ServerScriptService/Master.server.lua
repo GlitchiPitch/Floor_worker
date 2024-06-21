@@ -42,11 +42,12 @@ local colorList = {
 local soundEvent = game.ReplicatedStorage.SoundEvent
 local bindEvent = game.ServerStorage.Event
 
-local currentColor = script.CurrentColor
-local leaderstats = script.leaderstats
+local currentColor = Instance.new('BrickColorValue')
+local leaderstats = Instance.new('Folder')
+local points = Instance.new('IntValue')
 
 function changePlayerPoints() 
-	leaderstats.points.Value += 1
+	points.Value += 1
 	utils.spawnItem(coin, moneyFolder, moneySpawner)
 end
 
@@ -54,7 +55,13 @@ function spawnFood()
 	utils.spawnItem(bread, foodFolder, foodSpawner)
 end
 
-function onPlayerAdded(player: Player) leaderstats.Parent = player end
+function onPlayerAdded(player: Player) 
+	points.Parent = leaderstats
+	leaderstats.Parent = player 
+end
+
+leaderstats.Name = 'leaderstats'
+points.Name = 'points'
 
 game.Players.PlayerAdded:Connect(onPlayerAdded)
 
