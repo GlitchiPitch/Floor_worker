@@ -6,6 +6,12 @@ function tween(instance, finishGoal)
 	tween.Completed:Wait()
 end
 
+function spawnItem(item: BasePart, parent: Folder, spawnPoint: Attachment)
+	local item_ = item:Clone()
+	item_.Parent = parent
+	item_.Position = spawnPoint.WorldCFrame.Position
+end
+
 --function spawnMoney()
 --	local coin_ = coin:Clone()
 --	coin_.Parent = moneyFolder
@@ -21,4 +27,5 @@ end
 
 return {
 	tween = tween,
+	spawnItem = spawnItem,
 }

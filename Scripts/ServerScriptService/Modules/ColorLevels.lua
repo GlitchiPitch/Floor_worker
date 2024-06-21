@@ -2,6 +2,8 @@ local modules = game.ServerScriptService.Modules
 local utils = require(modules.Utils)
 
 local data: {
+	colorLevelModels: Folder,
+	colorList: {BrickColor},
 	colorLevelValue: number,
 	colorLevelTileSize: number,
 	soundEvent: RemoteEvent,
@@ -19,7 +21,6 @@ local colorLevels: {
 } = {}
 
 function changeColorLevel(bar, index)
-	
 	utils.tween(bar, {
 		Size = bar.Size + Vector3.new(0, data.colorLevelTileSize * index, 0),
 		Position = bar.Position + Vector3.new(0, data.colorLevelTileSize / 2 * index, 0)
@@ -72,16 +73,21 @@ function setupColorLevels()
 	end
 end
 
-function init(colorLevelsFolder: Folder, data_)
+function init(data_)
 	data = data_
-	for i, colorLevelModel in colorLevelsFolder:GetChildren() do
+	for i, colorLevelModel in data.colorLevelModels:GetChildren() do
 		colorLevels[colorLevelModel] = {
-			bar = colorLevelModel:FindFirstChild('Bar'),
-			gate = colorLevelModel:FindFirstChild('Gate'),
-			spawner = colorLevelModel:FindFirstChild('Spawner'),
-			button = colorLevelModel:FindFirstChild('Button'),
-			colorLevel = colorLevelModel:FindFirstChild('ColorLevel'),
+			bar = colorLevelModel.Bar,
+			gate = colorLevelModel.Gate,
+			spawner = colorLevelModel.Spawner,
+			button = colorLevelModel.Button,
+			colorLevel = colorLevelModel.ColorLevel,
 		}
+		
+		colorLevels[colorLevelModel].bar.BrickColor = data.colorList[i]
+		colorLevels[colorLevelModel].button.BrickColor = data.colorList[i]
+		colorLevels[colorLevelModel].gate.BrickColor = data.colorList[i]
+		colorLevels[colorLevelModel].spawner.BrickColor = data.colorList[i]
 	end
 	
 	setupColorLevels()
