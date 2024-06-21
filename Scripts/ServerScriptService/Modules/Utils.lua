@@ -12,20 +12,7 @@ function spawnItem(item: BasePart, parent: Folder, spawnPoint: Attachment)
 	item_.Position = spawnPoint.WorldCFrame.Position
 end
 
---function spawnMoney()
---	local coin_ = coin:Clone()
---	coin_.Parent = moneyFolder
---	coin_.Position = money.WorldCFrame.Position
---end
-
---function spawnFood()
---	local bread_ = bread:Clone()
---	bread_.Parent = workspace
---	bread_.Position = food.WorldCFrame.Position
---end
-
-
-return {
-	tween = tween,
-	spawnItem = spawnItem,
+return {	
+	spawnItem 			= spawnItem,
+	tween 				= tween,
 }

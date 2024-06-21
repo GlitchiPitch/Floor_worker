@@ -48,12 +48,10 @@ end
 
 function takeColorForConveyor(button, model: Model)
 	local bar = colorLevels[model]
-	local colorLevel: IntValue = bar.colorLevel
-	if colorLevel.Value > 0 then
-		--level.BrickColor = button.BrickColor
+	if bar.colorLevel.Value > 0 then
 		data.bindEvent:Fire('changeLiquidColor', button.BrickColor)
 		changeColorLevel(bar.bar, -1)
-		colorLevel.Value -= 1
+		bar.colorLevel.Value -= 1
 	end
 end
 
@@ -63,11 +61,11 @@ function setupColorLevels()
 			colorGateTouched(hit, items.gate.BrickColor, model)
 		end)
 		
-		items.spawner:FindFirstChildOfClass('ClickDetector').MouseClick:Connect(function()
+		items.spawner.ClickDetector.MouseClick:Connect(function()
 			createColorTool(items.spawner)
 		end)
 		
-		items.button:FindFirstChildOfClass('ClickDetector').MouseClick:Connect(function()
+		items.button.ClickDetector.MouseClick:Connect(function()
 			takeColorForConveyor(items.button, model)
 		end)
 	end

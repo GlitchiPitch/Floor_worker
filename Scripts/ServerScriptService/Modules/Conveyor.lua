@@ -8,7 +8,7 @@ local data: {
 	colorList: {BrickColor},
 	soundEvent: RemoteEvent,
 	bindEvent: BindableEvent,
-	changePlayerPoints: () -> (),
+	changePlayerPoints: (value: number) -> (),
 }
 
 local conveyor: {
@@ -76,12 +76,15 @@ function changeCurrentColor()
 end
 
 function setupGetButton()
-	if stateValues.liquidLevelIsFull.Value or stateValues.conveyourIsOn.Value then return end
-	conveyor.getButton:FindFirstChildOfClass('ClickDetector').MouseClick:Connect(spawnItem)
+	local detector: ClickDetector = conveyor.getButton.ClickDetector
+	detector.MouseClick:Connect(function()
+		if stateValues.liquidLevelIsFull.Value or stateValues.conveyourIsOn.Value then return end
+		spawnItem()
+	end)
 end
 
 function setupClicker(clickedObject: Instance, checkedValue: BoolValue, changedValue: BoolValue, callback: (boolean) -> ())
-	local detector: ClickDetector = clickedObject:FindFirstChildOfClass('ClickDetector')
+	local detector: ClickDetector = clickedObject.ClickDetector
 	detector.MouseClick:Connect(function()
 		if checkedValue.Value == true then return end
 		detector.MaxActivationDistance = 0
@@ -97,7 +100,7 @@ function setupChecingGate(hit: BasePart)
 			data.soundEvent:FireAllClients('yes')
 			hit:Destroy()
 			changeCurrentColor()
-			data.changePlayerPoints()
+			data.changePlayerPoints(1)
 		else
 			data.soundEvent:FireAllClients('no')
 		end
