@@ -1,10 +1,13 @@
 
+local reModules = game.ReplicatedStorage.Modules
 local modules = game.ServerScriptService.Modules
 local utils = require(modules.Utils)
+local sounds = require(reModules.Sounds)
 
 local data: {
     playerMoney: IntValue,
     foodSpawnerModel: Model | Folder,
+    soundEvent: RemoteEvent,
     foodModel: BasePart,
     changePlayerPoints: (value: number) -> (),
 }
@@ -18,8 +21,11 @@ local foodSpawner: {
 
 function activateButton()
     if data.playerMoney.Value > 0 then
+        data.soundEvent:FireAllClients(sounds.getFood)
         utils.spawnItem(foodSpawner.foodModel, foodSpawner.foodFolder, foodSpawner.spawnPoint)
         data.changePlayerPoints(-1)
+    else
+        data.soundEvent:FireAllClients(sounds.error)
     end
 end
 
@@ -36,6 +42,7 @@ function init(data_)
         spawnPoint = data.foodSpawnerModel.Attachment,
         foodFolder = data.foodSpawnerModel.Food,
         foodModel = data.foodModel,
+        soundEvent = data.soundEvent,
     }
 
     setupSpawner()

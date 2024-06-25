@@ -1,5 +1,7 @@
 local modules = game.ServerScriptService.Modules
+local reModules = game.ReplicatedStorage.Modules
 local utils = require(modules.Utils)
+local sounds = require(reModules.Sounds)
 
 local data: {
 	colorLevelModels: Folder,
@@ -21,6 +23,7 @@ local colorLevels: {
 } = {}
 
 function changeColorLevel(bar, index)
+	data.soundEvent:FireAllClients(sounds.pushButton)
 	utils.tween(bar, {
 		Size = bar.Size + Vector3.new(0, data.colorLevelTileSize * index, 0),
 		Position = bar.Position + Vector3.new(0, data.colorLevelTileSize / 2 * index, 0)
@@ -31,6 +34,7 @@ function colorGateTouched(hit: BasePart, gateColor: BrickColor, model: Model)
 	local bar = colorLevels[model]
 	local colorLevel: IntValue = bar.colorLevel
 	if hit.BrickColor == gateColor then
+		data.soundEvent:FireAllClients(sounds.liquidLevel)
 		if colorLevel.Value < 10 then
 			hit:Destroy()
 			changeColorLevel(bar.bar, 1)
@@ -40,6 +44,7 @@ function colorGateTouched(hit: BasePart, gateColor: BrickColor, model: Model)
 end
 
 function createColorTool(button)
+	data.soundEvent:FireAllClients(sounds.getColorTool)
 	local tool = game.ServerStorage.Tool:Clone()
 	tool.Parent = workspace
 	tool.Handle.BrickColor = button.BrickColor
@@ -47,6 +52,7 @@ function createColorTool(button)
 end
 
 function takeColorForConveyor(button, model: Model)
+	data.soundEvent:FireAllClients(sounds.pushButton)
 	local bar = colorLevels[model]
 	if bar.colorLevel.Value > 0 then
 		data.bindEvent:Fire('changeLiquidColor', button.BrickColor)
@@ -87,7 +93,7 @@ function init(data_)
 		colorLevels[colorLevelModel].gate.BrickColor = data.colorList[i]
 		colorLevels[colorLevelModel].spawner.BrickColor = data.colorList[i]
 	end
-	
+
 	setupColorLevels()
 	
 end

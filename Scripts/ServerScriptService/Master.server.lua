@@ -32,11 +32,17 @@
 			игроку по дефолту дают шмотки в сундуке, которые он должен надеть чтобы работать, если надзиратель увидит тебя без формы то ударит
 ]]
 
+--[[
+	оформить баблы у игрока и надзирателя
+	реализовать механику поломки конвеера
+]]
+
 -- services
 local tweenService = game:GetService('TweenService')
 
 -- modules
 local modules = game.ServerScriptService.Modules
+
 local colorLevels = require(modules.ColorLevels)
 local conveyor = require(modules.Conveyor)
 local foodSpawner = require(modules.FoodSpawner)
@@ -45,10 +51,6 @@ local moneySpawner = require(modules.MoneySpawner)
 -- workspace
 local conveyorFolder = workspace.Conveyor
 local colorLevelModels = workspace.ColorLevels
-
--- drop to models
-local moneyFolder = workspace.Money
-local foodFolder = workspace.Food
 
 -- item spawners
 local foodSpawnerModel = workspace.FoodSpawner
@@ -89,17 +91,17 @@ points.Name = 'points'
 game.Players.PlayerAdded:Connect(onPlayerAdded)
 
 foodSpawner.init({
-
 	changePlayerPoints = changePlayerPoints,
-	
 	playerMoney = points,
 	foodSpawnerModel = foodSpawnerModel,
+	soundEvent = soundEvent,
 	foodModel = bread,
 })
 
 moneySpawner.init({
 	playerMoney = points,
     moneySpawnerModel = moneySpawnerModel,
+	soundEvent = soundEvent,
     moneyModel = coin,
 })
 
@@ -113,15 +115,12 @@ colorLevels.init({
 })
 
 conveyor.init(conveyorFolder, {
-
 	changePlayerPoints = changePlayerPoints,
-
 	currentColor = currentColor,
 	colorList = colorList, 
 	soundEvent = soundEvent,
 	bindEvent = bindEvent,
 })
-
 
 
 

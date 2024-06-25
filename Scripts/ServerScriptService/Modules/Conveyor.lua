@@ -1,7 +1,8 @@
 --!strict
-
+local reModules = game.ReplicatedStorage.Modules
 local modules = game.ServerScriptService.Modules
 local utils = require(modules.Utils)
+local sounds = require(reModules.Sounds)
 
 local data: {
 	currentColor: BrickColorValue,
@@ -27,6 +28,7 @@ local conveyor: {
 local stateValues: {
 	liquidLevelIsFull: BoolValue,
 	conveyourIsOn: BoolValue,
+	isWorking: BoolValue,
 }
 
 function spawnItem()
@@ -37,6 +39,7 @@ function spawnItem()
 end
 
 function activateConveyor(isOn: boolean)
+	data.soundEvent:FireAllClients(sounds.conveyor)
 	local goal = {Position = conveyor.door.Position + Vector3.new(0, conveyor.door.Size.Y * (isOn and 1 or -1), 0)}
 	utils.tween(conveyor.door, goal)
 	conveyor.base.CanCollide = isOn
@@ -49,6 +52,7 @@ function changeLiquidColor(liquidColor: BrickColor)
 end
 
 function changeLevel(isFull: boolean)
+	data.soundEvent:FireAllClients(sounds.liquidLevel)
 	conveyor.levelButton.BrickColor = isFull and BrickColor.Green() or BrickColor.Red()
 	local full = Vector3.new(31, 15, 31)
 	local empty = Vector3.new(31, 1, 31)
@@ -64,21 +68,23 @@ end
 
 function changeCurrentColor()
 	data.currentColor.Value = data.colorList[math.random(#data.colorList)]
-	
 	local frame: BasePart = conveyor.screen.Frame
 	local screen: BasePart = conveyor.screen.Screen
-
 	frame.BrickColor = BrickColor.new('Bright green')
 	task.wait(2)
 	frame.BrickColor = BrickColor.new('Medium stone grey')
 	screen.BrickColor = data.currentColor.Value
-	
 end
 
 function setupGetButton()
 	local detector: ClickDetector = conveyor.getButton.ClickDetector
 	detector.MouseClick:Connect(function()
-		if stateValues.liquidLevelIsFull.Value or stateValues.conveyourIsOn.Value then return end
+		if stateValues.liquidLevelIsFull.Value or stateValues.conveyourIsOn.Value or not stateValues.isWorking.Value then 
+			-- message()
+			return 
+		end
+
+		data.soundEvent:FireAllClients(sounds.getFood)
 		spawnItem()
 	end)
 end
@@ -86,7 +92,12 @@ end
 function setupClicker(clickedObject: Instance, checkedValue: BoolValue, changedValue: BoolValue, callback: (boolean) -> ())
 	local detector: ClickDetector = clickedObject.ClickDetector
 	detector.MouseClick:Connect(function()
-		if checkedValue.Value == true then return end
+		if checkedValue.Value == true or not stateValues.isWorking.Value then 
+			-- message('something wrong')
+			return 
+		end
+		
+		data.soundEvent:FireAllClients(sounds.pushButton)
 		detector.MaxActivationDistance = 0
 		callback(changedValue.Value)
 		changedValue.Value = not changedValue.Value
@@ -97,19 +108,26 @@ end
 function setupChecingGate(hit: BasePart)
 	if hit.CollisionGroup == 'Item' then
 		if hit.BrickColor == data.currentColor.Value then
-			data.soundEvent:FireAllClients('yes')
+			data.soundEvent:FireAllClients(sounds.accept)
 			hit:Destroy()
 			changeCurrentColor()
 			data.changePlayerPoints(1)
 		else
-			data.soundEvent:FireAllClients('no')
+			data.soundEvent:FireAllClients(sounds.error)
 		end
+	elseif hit.Parent:IsA('Tool') then
+		stateValues.isWorking.Value = false
 	end
+end
+
+function repairConveyor()
+	stateValues.isWorking.Value = true
 end
 
 function conveyorEvents(method: string, ...)
 	local methods = {
 		changeLiquidColor = changeLiquidColor,
+		repairConveyor = repairConveyor,
 	}
 
 	if methods[method] then
@@ -138,6 +156,7 @@ function init(conveyor_: Folder, data_)
 	stateValues = {
 		conveyourIsOn = conveyor.pushButton:FindFirstChildOfClass('BoolValue'),
 		liquidLevelIsFull = conveyor.levelButton:FindFirstChildOfClass('BoolValue'),
+		isWorking = conveyor_:FindFirstChildOfClass('BoolValue'),
 	}
 	
 	setupGetButton()
@@ -148,6 +167,7 @@ function init(conveyor_: Folder, data_)
 
 	data.bindEvent.Event:Connect(conveyorEvents)
 	conveyor.checingkGate.Touched:Connect(setupChecingGate)
+
 end
 
 return {
