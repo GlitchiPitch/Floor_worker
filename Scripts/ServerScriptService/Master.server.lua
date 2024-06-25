@@ -35,10 +35,10 @@
 --[[
 	оформить баблы у игрока и надзирателя
 	реализовать механику поломки конвеера
-]]
 
--- services
-local tweenService = game:GetService('TweenService')
+	возможно поменять айдл анимки,
+
+]]
 
 -- modules
 local modules = game.ServerScriptService.Modules
