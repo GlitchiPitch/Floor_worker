@@ -38,11 +38,11 @@ function init(data_)
     data = data_
 
     foodSpawner = {
-        spawnButton = data.foodSpawnerModel.Button,
-        spawnPoint = data.foodSpawnerModel.Attachment,
-        foodFolder = data.foodSpawnerModel.Food,
-        foodModel = data.foodModel,
-        soundEvent = data.soundEvent,
+        spawnButton     = data.foodSpawnerModel.Button,
+        spawnPoint      = data.foodSpawnerModel.Attachment,
+        foodFolder      = data.foodSpawnerModel.Food,
+        foodModel       = data.foodModel,
+        soundEvent      = data.soundEvent,
     }
 
     setupSpawner()

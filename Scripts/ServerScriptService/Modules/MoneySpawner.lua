@@ -2,6 +2,7 @@ local modules = game.ServerScriptService.Modules
 local reModules = game.ReplicatedStorage.Modules
 local utils = require(modules.Utils)
 local sounds = require(reModules.Sounds)
+
 local data: {
     playerMoney: IntValue,
     moneySpawnerModel: Model | Folder,
@@ -32,10 +33,10 @@ function init(data_)
     data = data_
 
     moneySpawner = {
-        spawnPoint = data.moneySpawnerModel.Attachment,
-        moneyFolder = data.moneySpawnerModel.Money,
-        moneyModel = data.moneyModel,
-        soundEvent = data.soundEvent,
+        spawnPoint      = data.moneySpawnerModel.Attachment,
+        moneyFolder     = data.moneySpawnerModel.Money,
+        moneyModel      = data.moneyModel,
+        soundEvent      = data.soundEvent,
     }
 
     setupSpawner()

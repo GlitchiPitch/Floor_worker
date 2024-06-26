@@ -81,11 +81,11 @@ function init(data_)
 	data = data_
 	for i, colorLevelModel in data.colorLevelModels:GetChildren() do
 		colorLevels[colorLevelModel] = {
-			bar = colorLevelModel.Bar,
-			gate = colorLevelModel.Gate,
-			spawner = colorLevelModel.Spawner,
-			button = colorLevelModel.Button,
-			colorLevel = colorLevelModel.ColorLevel,
+			bar 		= colorLevelModel.Bar,
+			gate 		= colorLevelModel.Gate,
+			spawner 	= colorLevelModel.Spawner,
+			button 		= colorLevelModel.Button,
+			colorLevel 	= colorLevelModel.ColorLevel,
 		}
 		
 		colorLevels[colorLevelModel].bar.BrickColor = data.colorList[i]

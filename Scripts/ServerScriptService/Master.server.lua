@@ -48,8 +48,10 @@ local conveyor = require(modules.Conveyor)
 local foodSpawner = require(modules.FoodSpawner)
 local moneySpawner = require(modules.MoneySpawner)
 
+local warden = require(modules.Warden)
+
 -- workspace
-local conveyorFolder = workspace.Conveyor
+local conveyorFolder: {IsWorking: BoolValue} = workspace.Conveyor
 local colorLevelModels = workspace.ColorLevels
 
 -- item spawners
@@ -59,6 +61,10 @@ local moneySpawnerModel = workspace.MoneySpawner
 -- items
 local bread = game.ServerStorage.Food
 local coin = game.ServerStorage.Money
+
+--npc
+local wardenModel: Model = workspace.Warden
+local player
 
 -- vars
 local colorLevelValue = 10
@@ -71,7 +77,8 @@ local colorList = {
 }
 
 -- events
-local soundEvent = game.ReplicatedStorage.SoundEvent
+local events = game.ReplicatedStorage.Events
+local soundEvent = events.SoundEvent
 local bindEvent = game.ServerStorage.Event
 
 local currentColor = Instance.new('BrickColorValue')
@@ -80,7 +87,8 @@ local points = Instance.new('IntValue')
 
 function changePlayerPoints(value: number) points.Value += value end
 
-function onPlayerAdded(player: Player) 
+function onPlayerAdded(player_: Player) 
+	player = player_
 	points.Parent = leaderstats
 	leaderstats.Parent = player 
 end
@@ -91,36 +99,42 @@ points.Name = 'points'
 game.Players.PlayerAdded:Connect(onPlayerAdded)
 
 foodSpawner.init({
-	changePlayerPoints = changePlayerPoints,
-	playerMoney = points,
-	foodSpawnerModel = foodSpawnerModel,
-	soundEvent = soundEvent,
-	foodModel = bread,
+	changePlayerPoints 	= changePlayerPoints,
+	playerMoney 		= points,
+	foodSpawnerModel 	= foodSpawnerModel,
+	soundEvent 			= soundEvent,
+	foodModel 			= bread,
 })
 
 moneySpawner.init({
-	playerMoney = points,
-    moneySpawnerModel = moneySpawnerModel,
-	soundEvent = soundEvent,
-    moneyModel = coin,
+	playerMoney 		= points,
+    moneySpawnerModel 	= moneySpawnerModel,
+	soundEvent 			= soundEvent,
+    moneyModel 			= coin,
 })
 
 colorLevels.init({
-	colorLevelValue = colorLevelValue,
-	colorLevelModels = colorLevelModels,
-	colorList = colorList,
-	colorLevelTileSize = colorLevelTileSize,
-	soundEvent = soundEvent,
-	bindEvent = bindEvent,
+	colorLevelValue 	= colorLevelValue,
+	colorLevelModels 	= colorLevelModels,
+	colorList 			= colorList,
+	colorLevelTileSize 	= colorLevelTileSize,
+	soundEvent 			= soundEvent,
+	bindEvent 			= bindEvent,
 })
 
 conveyor.init(conveyorFolder, {
-	changePlayerPoints = changePlayerPoints,
-	currentColor = currentColor,
-	colorList = colorList, 
-	soundEvent = soundEvent,
-	bindEvent = bindEvent,
+	changePlayerPoints 	= changePlayerPoints,
+	currentColor 		= currentColor,
+	colorList 			= colorList, 
+	soundEvent 			= soundEvent,
+	bindEvent 			= bindEvent,
 })
 
+warden.init({
+	wardenModel 		= wardenModel,
+    player 				= player,
+    playerCoins 		= points,
+    conveyorIsWorking 	= conveyorFolder.IsWorking,
+})
 
 

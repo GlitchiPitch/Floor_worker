@@ -9,8 +9,12 @@
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
       "$path": "Scripts/ReplicatedStorage",
-      "SoundEvent": {
-        "$className": "RemoteEvent"
+      "Events": {
+        "$className": "Folder",
+        "$path": "Scripts/ReplicatedStorage/Events",
+        "SoundEvent": { "$className": "RemoteEvent" },
+        "InventoryInvoke": { "$className": "RemoteFunction" },
+        "BubbleEvent": { "$className": "RemoteEvent" }
       }
     },
     "StarterPlayer": {

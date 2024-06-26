@@ -58,8 +58,8 @@ function changeLevel(isFull: boolean)
 	local empty = Vector3.new(31, 1, 31)
 	utils.tween(conveyor.liquid, 
 		{
-			Position = conveyor.liquid.Position + (((Vector3.yAxis * full) / 2) * (isFull and -1 or 1)),
-			Size = isFull and empty or full,
+			Position 	= conveyor.liquid.Position + (((Vector3.yAxis * full) / 2) * (isFull and -1 or 1)),
+			Size 		= isFull and empty or full,
 		}
 	)
 
@@ -126,8 +126,8 @@ end
 
 function conveyorEvents(method: string, ...)
 	local methods = {
-		changeLiquidColor = changeLiquidColor,
-		repairConveyor = repairConveyor,
+		changeLiquidColor 	= changeLiquidColor,
+		repairConveyor 		= repairConveyor,
 	}
 
 	if methods[method] then
@@ -141,22 +141,22 @@ function init(conveyor_: Folder, data_)
 	data = data_
 
 	conveyor = {
-		getButton = conveyor_.Get,
-		levelButton = conveyor_.Level,
-		pushButton = conveyor_.Push,
-		spawner = conveyor_.Spawner,
-		door = conveyor_.Door,
-		road = conveyor_.Road,
-		checingkGate = conveyor_.CheckingGate,
-		base = conveyor_.Base,
-		screen = conveyor_.Screen,
-		liquid = conveyor_.Liquid,
+		getButton 		= conveyor_.Get,
+		levelButton 	= conveyor_.Level,
+		pushButton 		= conveyor_.Push,
+		spawner 		= conveyor_.Spawner,
+		door 			= conveyor_.Door,
+		road 			= conveyor_.Road,
+		checingkGate 	= conveyor_.CheckingGate,
+		base 			= conveyor_.Base,
+		screen 			= conveyor_.Screen,
+		liquid 			= conveyor_.Liquid,
 	}
 
 	stateValues = {
-		conveyourIsOn = conveyor.pushButton:FindFirstChildOfClass('BoolValue'),
-		liquidLevelIsFull = conveyor.levelButton:FindFirstChildOfClass('BoolValue'),
-		isWorking = conveyor_:FindFirstChildOfClass('BoolValue'),
+		conveyourIsOn 		= conveyor.pushButton:FindFirstChildOfClass('BoolValue'),
+		liquidLevelIsFull 	= conveyor.levelButton:FindFirstChildOfClass('BoolValue'),
+		isWorking 			= conveyor_:FindFirstChildOfClass('BoolValue'),
 	}
 	
 	setupGetButton()
