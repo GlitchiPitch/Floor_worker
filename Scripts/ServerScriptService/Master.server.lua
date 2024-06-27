@@ -47,12 +47,13 @@ local colorLevels = require(modules.ColorLevels)
 local conveyor = require(modules.Conveyor)
 local foodSpawner = require(modules.FoodSpawner)
 local moneySpawner = require(modules.MoneySpawner)
-
+local inventory = require(modules.Inventory)
 local warden = require(modules.Warden)
 
 -- workspace
 local conveyorFolder: {IsWorking: BoolValue} = workspace.Conveyor
 local colorLevelModels = workspace.ColorLevels
+local wardenPath = workspace.WardenPath
 
 -- item spawners
 local foodSpawnerModel = workspace.FoodSpawner
@@ -84,6 +85,7 @@ local bindEvent = game.ServerStorage.Event
 local currentColor = Instance.new('BrickColorValue')
 local leaderstats = Instance.new('Folder')
 local points = Instance.new('IntValue')
+local dailyNorm = Instance.new('IntValue')
 
 function changePlayerPoints(value: number) points.Value += value end
 
@@ -94,7 +96,7 @@ function onPlayerAdded(player_: Player)
 end
 
 leaderstats.Name = 'leaderstats'
-points.Name = 'points'
+points.Name = 'Coins'
 
 game.Players.PlayerAdded:Connect(onPlayerAdded)
 
@@ -128,13 +130,27 @@ conveyor.init(conveyorFolder, {
 	colorList 			= colorList, 
 	soundEvent 			= soundEvent,
 	bindEvent 			= bindEvent,
+	dailyNorm 			= dailyNorm,
 })
 
 warden.init({
+	wardenPath 			= wardenPath,
 	wardenModel 		= wardenModel,
     player 				= player,
     playerCoins 		= points,
     conveyorIsWorking 	= conveyorFolder.IsWorking,
 })
+
+inventory.init()
+
+function startDay()
+	dailyNorm.Value = 10
+end
+
+function finishDay()
+	-- add new day line on the wall
+end
+
+startDay()
 
 

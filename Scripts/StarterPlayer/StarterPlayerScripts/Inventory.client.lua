@@ -10,7 +10,6 @@ local inventoryBox: {
 } = workspace:WaitForChild('Inventory')
 
 local inventoryInvoke: RemoteFunction = events.InventoryInvoke
-
 local inventoryButtons: {ImageButton} = {}
 
 function clickToInventoryButton(clickedButton: ImageButton)

@@ -1,6 +1,6 @@
 
 local collectionService = game:GetService("CollectionService")
-
+local pathfindingService = game:GetService("PathfindingService")
 local events = game.ReplicatedStorage.Events
 local bubbleEvent = events.BubbleEvent
 
@@ -11,6 +11,7 @@ local warden: {
 }
 
 local data: {
+    wardenPath: Folder,
     wardenModel: Model,
     player: Player,
     playerCoins: IntValue,
@@ -23,24 +24,31 @@ local bubbles = {
 }
 
 local movePoints: {
-    conveyor: CFrame,
-    exitDoor: CFrame,
-    seat: CFrame,
+    conveyor: Vector3,
+    exitDoor: Vector3,
+    seat: Vector3,
 }
 
 function getBribe()
     
 end
 
-
-
 function exit()
     warden.model.Parent = game.ServerStorage
 end
 
+function lookAt()
+    
+end
+
 function moveTo(point: Vector3)
-    warden.humanoid:MoveTo(point)
-    warden.humanoid.MoveToFinished:Wait()
+    local path = pathfindingService:CreatePath()
+    path:ComputeAsync(warden.model:GetPivot().Position, point)
+    local waypoints: {PathWaypoint} = path:GetWaypoints()
+    for i, p in waypoints do
+        warden.humanoid:MoveTo(p)
+        warden.humanoid.MoveToFinished:Wait()
+    end
 end
 
 function says(message: string)
@@ -78,6 +86,7 @@ end
 function conveyorIsWorkingChanged(value: boolean)
     if not value then
         moveTo(movePoints.conveyor)
+        lookAt() -- look at player
         says(bubbles.brokenConveyor)
         moveTo(movePoints.exitDoor)
         exit()
@@ -92,11 +101,10 @@ function init(data_)
         humanoid    = data.wardenModel:FindFirstAncestorOfClass('Humanoid'),
         head        = data.wardenModel:FindFirstChild('Head'),
     }
-
     movePoints = {
-        conveyor    = CFrame.new(0, 0, 0),
-        exitDoor    = CFrame.new(0, 0, 0),
-        seat        = CFrame.new(0, 0, 0),
+        conveyor    = data.wardenPath.Conveyor.Position,
+        exitDoor    = data.wardenPath.Exit.Position,
+        seat        = data.wardenPath.Seat.Position,
     }
 
     data.conveyorIsWorking.Changed:Connect(conveyorIsWorkingChanged)

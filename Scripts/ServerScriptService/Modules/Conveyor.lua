@@ -23,12 +23,14 @@ local conveyor: {
 	base: BasePart,
 	screen: Model,
 	liquid: BasePart,
+	counter: Part,
 }
 
 local stateValues: {
 	liquidLevelIsFull: BoolValue,
 	conveyourIsOn: BoolValue,
 	isWorking: BoolValue,
+	dailyNorm: IntValue,
 }
 
 function spawnItem()
@@ -79,7 +81,7 @@ end
 function setupGetButton()
 	local detector: ClickDetector = conveyor.getButton.ClickDetector
 	detector.MouseClick:Connect(function()
-		if stateValues.liquidLevelIsFull.Value or stateValues.conveyourIsOn.Value or not stateValues.isWorking.Value then 
+		if stateValues.liquidLevelIsFull.Value or stateValues.conveyourIsOn.Value or not stateValues.isWorking.Value or stateValues.dailyNorm == 0 then 
 			-- message()
 			return 
 		end
@@ -109,6 +111,7 @@ function setupChecingGate(hit: BasePart)
 	if hit.CollisionGroup == 'Item' then
 		if hit.BrickColor == data.currentColor.Value then
 			data.soundEvent:FireAllClients(sounds.accept)
+			stateValues.dailyNorm.Value -= 1
 			hit:Destroy()
 			changeCurrentColor()
 			data.changePlayerPoints(1)
@@ -118,6 +121,11 @@ function setupChecingGate(hit: BasePart)
 	elseif hit.Parent:IsA('Tool') then
 		stateValues.isWorking.Value = false
 	end
+end
+
+function setupCounter(value: number)
+	local label = conveyor.counter:FindFirstChildOfClass('SurfaceGui'):FindFirstChildOfClass('TextLabel')
+	label.Text = value
 end
 
 function repairConveyor()
@@ -151,12 +159,14 @@ function init(conveyor_: Folder, data_)
 		base 			= conveyor_.Base,
 		screen 			= conveyor_.Screen,
 		liquid 			= conveyor_.Liquid,
+		counter 		= conveyor_.Counter,
 	}
 
 	stateValues = {
 		conveyourIsOn 		= conveyor.pushButton:FindFirstChildOfClass('BoolValue'),
 		liquidLevelIsFull 	= conveyor.levelButton:FindFirstChildOfClass('BoolValue'),
 		isWorking 			= conveyor_:FindFirstChildOfClass('BoolValue'),
+		dailyNorm			= data.dailyNorm,
 	}
 	
 	setupGetButton()
@@ -167,7 +177,7 @@ function init(conveyor_: Folder, data_)
 
 	data.bindEvent.Event:Connect(conveyorEvents)
 	conveyor.checingkGate.Touched:Connect(setupChecingGate)
-
+	stateValues.dailyNorm.Changed:Connect(setupCounter)
 end
 
 return {
