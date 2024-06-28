@@ -10,6 +10,7 @@ local data: {
 	soundEvent: RemoteEvent,
 	bindEvent: BindableEvent,
 	changePlayerPoints: (value: number) -> (),
+	spawnedItems: {BasePart},
 }
 
 local conveyor: {
@@ -34,7 +35,7 @@ local stateValues: {
 }
 
 function spawnItem()
-	local item = Instance.new('Part')
+	local item = data.spawnedItems[math.random(#data.spawnedItems)]:Clone()
 	item.Parent = workspace
 	item.CollisionGroup = 'Item'
 	item.Position = conveyor.spawner.Position
@@ -118,7 +119,10 @@ function setupChecingGate(hit: BasePart)
 		else
 			data.soundEvent:FireAllClients(sounds.error)
 		end
-	elseif hit.Parent:IsA('Tool') then
+	end
+
+	if hit.Parent:IsA('Tool') then
+		hit.Parent:Destroy()
 		stateValues.isWorking.Value = false
 	end
 end

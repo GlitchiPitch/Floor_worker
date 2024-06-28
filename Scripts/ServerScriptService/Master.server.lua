@@ -1,3 +1,4 @@
+local RunService = game:GetService("RunService")
 --[[
 
 	налоги, выход наружу через взятку
@@ -23,7 +24,7 @@
 			из которых можно будет собрать оружие или выпадет прям оружие, которым можно будет убить надзирателя,
 
 			если надзиратель увидит у игрока что-то в руке, он подойдет и заберет
-			- игрок может напасть на надзирателя, но если он попробует это сделать напрямую то его надзиратель застрелит,
+				- игрок может напасть на надзирателя, но если он попробует это сделать напрямую то его надзиратель застрелит,
 				- надо напасть со спины
 			
 			надзиратель будет через определенное количество времени приходить проверять игрока, если он будет видеть что-то не по регламенту, то будет действовать.
@@ -33,10 +34,7 @@
 ]]
 
 --[[
-	оформить баблы у игрока и надзирателя
-	реализовать механику поломки конвеера
-
-	возможно поменять айдл анимки,
+	-- переделать работу конвеера на то чтобы он делал из вещей зомби, зомби сделать в виде, мдоельки или меша без хуманоида
 
 ]]
 
@@ -53,7 +51,12 @@ local warden = require(modules.Warden)
 -- workspace
 local conveyorFolder: {IsWorking: BoolValue} = workspace.Conveyor
 local colorLevelModels = workspace.ColorLevels
-local wardenPath = workspace.WardenPath
+local wardenPath: {
+	Patrol: Part,
+	Conveyor: Part,
+	Exit: Part,
+	Seat: Part,
+} = workspace.WardenPath
 
 -- item spawners
 local foodSpawnerModel = workspace.FoodSpawner
@@ -62,7 +65,7 @@ local moneySpawnerModel = workspace.MoneySpawner
 -- items
 local bread = game.ServerStorage.Food
 local coin = game.ServerStorage.Money
-
+local spawnedItems = game.ServerStorage.Eggs:GetChildren()
 --npc
 local wardenModel: Model = workspace.Warden
 local player
@@ -87,16 +90,25 @@ local leaderstats = Instance.new('Folder')
 local points = Instance.new('IntValue')
 local dailyNorm = Instance.new('IntValue')
 
+leaderstats.Name = 'leaderstats'
+points.Name = 'Coins'
+
 function changePlayerPoints(value: number) points.Value += value end
 
 function onPlayerAdded(player_: Player) 
 	player = player_
 	points.Parent = leaderstats
 	leaderstats.Parent = player 
+
 end
 
-leaderstats.Name = 'leaderstats'
-points.Name = 'Coins'
+function startDay()
+	dailyNorm.Value = 10
+end
+
+function finishDay()
+	-- add new day line on the wall
+end
 
 game.Players.PlayerAdded:Connect(onPlayerAdded)
 
@@ -131,6 +143,7 @@ conveyor.init(conveyorFolder, {
 	soundEvent 			= soundEvent,
 	bindEvent 			= bindEvent,
 	dailyNorm 			= dailyNorm,
+	spawnedItems 		= spawnedItems,
 })
 
 warden.init({
@@ -142,14 +155,6 @@ warden.init({
 })
 
 inventory.init()
-
-function startDay()
-	dailyNorm.Value = 10
-end
-
-function finishDay()
-	-- add new day line on the wall
-end
 
 startDay()
 
