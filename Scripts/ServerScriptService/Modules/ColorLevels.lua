@@ -1,26 +1,13 @@
 local modules = game.ServerScriptService.Modules
 local reModules = game.ReplicatedStorage.Modules
-local utils = require(modules.Utils)
+local utils = require(game.ReplicatedStorage.Utils)
 local sounds = require(reModules.Sounds)
 
-local data: {
-	colorLevelModels: Folder,
-	colorList: {BrickColor},
-	colorLevelValue: number,
-	colorLevelTileSize: number,
-	soundEvent: RemoteEvent,
-	bindEvent: BindableEvent,
-}
+local dataTypes = require(game.ServerScriptService.DataTypes)
+local types = require(game.ServerScriptService.Types)
 
-local colorLevels: {
-	[Model]: {
-		bar: BasePart,
-		gate: BasePart,
-		spawner: BasePart,
-		button: BasePart,
-		colorLevel: IntValue,
-	}
-} = {}
+local data: dataTypes.ColorLevels
+local colorLevels: types.ColorLevels = {}
 
 function changeColorLevel(bar, index)
 	data.soundEvent:FireAllClients(sounds.pushButton)

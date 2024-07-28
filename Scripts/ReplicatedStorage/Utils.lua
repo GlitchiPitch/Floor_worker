@@ -1,7 +1,7 @@
 local tweenService = game:GetService('TweenService')
 
-function tween(instance, finishGoal)
-	local tween = tweenService:Create(instance, TweenInfo.new(1), finishGoal)
+function tween(instance, finishGoal, tweenInfo: TweenInfo)
+	local tween = tweenService:Create(instance, tweenInfo or TweenInfo.new(1), finishGoal)
 	tween:Play()
 	tween.Completed:Wait()
 end

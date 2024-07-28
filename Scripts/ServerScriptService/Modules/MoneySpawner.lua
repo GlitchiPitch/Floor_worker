@@ -1,21 +1,13 @@
 local modules = game.ServerScriptService.Modules
 local reModules = game.ReplicatedStorage.Modules
-local utils = require(modules.Utils)
+local utils = require(game.ReplicatedStorage.Utils)
 local sounds = require(reModules.Sounds)
 
-local data: {
-    playerMoney: IntValue,
-    moneySpawnerModel: Model | Folder,
-    soundEvent: RemoteEvent,
-    moneyModel: BasePart,
-}
+local dataTypes = require(game.ServerScriptService.DataTypes)
+local types = require(game.ServerScriptService.Types)
 
-local moneySpawner: {
-    spawnPoint: Attachment,
-    spawnButton: BasePart,
-    moneyModel: BasePart,
-    moneyFolder: Folder,
-}
+local data: dataTypes.MoneySpawnerData
+local moneySpawner: types.MoneySpawner
 
 function setupSpawner()
     data.playerMoney.Changed:Connect(function(value: number)

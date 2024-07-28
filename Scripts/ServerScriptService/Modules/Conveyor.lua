@@ -1,31 +1,14 @@
 --!strict
 local reModules = game.ReplicatedStorage.Modules
 local modules = game.ServerScriptService.Modules
-local utils = require(modules.Utils)
+local utils = require(game.ReplicatedStorage.Utils)
 local sounds = require(reModules.Sounds)
 
-local data: {
-	currentColor: BrickColorValue,
-	colorList: {BrickColor},
-	soundEvent: RemoteEvent,
-	bindEvent: BindableEvent,
-	changePlayerPoints: (value: number) -> (),
-	spawnedItems: {BasePart},
-}
+local dataTypes = require(game.ServerScriptService.DataTypes)
+local types = require(game.ServerScriptService.Types)
 
-local conveyor: {
-	getButton: BasePart,
-	levelButton: BasePart,
-	pushButton: BasePart,
-	spawner: BasePart,
-	door: BasePart,
-	road: BasePart,
-	checingkGate: BasePart,
-	base: BasePart,
-	screen: Model,
-	liquid: BasePart,
-	counter: Part,
-}
+local data: dataTypes.Conveyor
+local conveyor: types.Conveyor
 
 local stateValues: {
 	liquidLevelIsFull: BoolValue,
@@ -35,10 +18,14 @@ local stateValues: {
 }
 
 function spawnItem()
-	local item = data.spawnedItems[math.random(#data.spawnedItems)]:Clone()
+	local item = data.spawnedItems:Clone() :: Model
 	item.Parent = workspace
-	item.CollisionGroup = 'Item'
-	item.Position = conveyor.spawner.Position
+	for i, v in item:GetChildren() do
+		if v:IsA('BasePart') then
+			v.CollisionGroup = 'Item'
+		end
+	end
+	item:PivotTo(conveyor.spawner.CFrame)
 end
 
 function activateConveyor(isOn: boolean)
@@ -65,8 +52,11 @@ function changeLevel(isFull: boolean)
 			Size 		= isFull and empty or full,
 		}
 	)
+	for i, v in workspace:GetPartsInPart(conveyor.liquid) do 
+		v.BrickColor = conveyor.liquid.BrickColor
+	end
 
-	for i, v in workspace:GetPartsInPart(conveyor.liquid) do v.BrickColor = conveyor.liquid.BrickColor end
+	-- add some equipment like a gun
 end
 
 function changeCurrentColor()
@@ -108,12 +98,12 @@ function setupClicker(clickedObject: Instance, checkedValue: BoolValue, changedV
 	end)
 end
 
-function setupChecingGate(hit: BasePart)
+function setupCheckingGate(hit: BasePart)
 	if hit.CollisionGroup == 'Item' then
 		if hit.BrickColor == data.currentColor.Value then
 			data.soundEvent:FireAllClients(sounds.accept)
 			stateValues.dailyNorm.Value -= 1
-			hit:Destroy()
+			hit.Parent:Destroy()
 			changeCurrentColor()
 			data.changePlayerPoints(1)
 		else
@@ -121,7 +111,7 @@ function setupChecingGate(hit: BasePart)
 		end
 	end
 
-	if hit.Parent:IsA('Tool') then
+	if hit and hit.Parent and hit.Parent:IsA('Tool') then
 		hit.Parent:Destroy()
 		stateValues.isWorking.Value = false
 	end
@@ -145,7 +135,6 @@ function conveyorEvents(method: string, ...)
 	if methods[method] then
 		methods[method](...)
 	end
-
 end
 
 function init(conveyor_: Folder, data_)
@@ -180,7 +169,7 @@ function init(conveyor_: Folder, data_)
 	setupClicker(conveyor.levelButton, stateValues.conveyourIsOn, stateValues.liquidLevelIsFull, changeLevel)
 
 	data.bindEvent.Event:Connect(conveyorEvents)
-	conveyor.checingkGate.Touched:Connect(setupChecingGate)
+	conveyor.checingkGate.Touched:Connect(setupCheckingGate)
 	stateValues.dailyNorm.Changed:Connect(setupCounter)
 end
 

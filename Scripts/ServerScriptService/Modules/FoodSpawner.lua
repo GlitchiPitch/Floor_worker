@@ -1,23 +1,14 @@
 
 local reModules = game.ReplicatedStorage.Modules
 local modules = game.ServerScriptService.Modules
-local utils = require(modules.Utils)
+local utils = require(game.ReplicatedStorage.Utils)
 local sounds = require(reModules.Sounds)
 
-local data: {
-    playerMoney: IntValue,
-    foodSpawnerModel: Model | Folder,
-    soundEvent: RemoteEvent,
-    foodModel: BasePart,
-    changePlayerPoints: (value: number) -> (),
-}
+local dataTypes = require(game.ServerScriptService.DataTypes)
+local types = require(game.ServerScriptService.Types)
 
-local foodSpawner: {
-    spawnPoint: Attachment,
-    spawnButton: BasePart,
-    foodModel: BasePart,
-    foodFolder: Folder,
-}
+local data: dataTypes.FoodSpawner
+local foodSpawner: types.FoodSpawner
 
 function activateButton()
     if data.playerMoney.Value > 0 then
