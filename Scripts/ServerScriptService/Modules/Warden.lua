@@ -1,28 +1,20 @@
 local pathfindingService = game:GetService("PathfindingService")
 local events = game.ReplicatedStorage.Events
-local bubbleEvent = events.BubbleEvent
+local bubbleEvent = events.Bubble
 
-local dataTypes = require(game.ServerScriptService.DataTypes)
-local types = require(game.ServerScriptService.Types)
+local dataTypes = require(game.ReplicatedStorage.DataTypes)
+local types = require(game.ReplicatedStorage.Types)
 
 local warden: types.Warden
 local data: dataTypes.Warden
 
-local bubbles = {
-	brokenConveyor = "What, wait here i will call helper",
-	getBribe = {
-		"Do you think I'm a poor man who, if you show him a coin, will break his forehead?",
-		"Go for a walk uncle, let's pretend we didn't see anything",
-	},
-}
+local bubbles 	= require(game.ServerScriptService.Bubbles).wardenBubbles
 
 local movePoints: {
 	conveyor: Vector3,
 	exitDoor: Vector3,
 	seat: Vector3,
 }
-
-function getBribe() end
 
 function exit()
 	warden.model.Parent = game.ServerStorage

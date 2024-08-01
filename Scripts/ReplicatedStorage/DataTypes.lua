@@ -7,19 +7,17 @@ export type Conveyor = {
 	spawnedItems: {BasePart},
 }
 
-export type FoodSpawner = {
-    playerMoney: IntValue,
-    foodSpawnerModel: Model | Folder,
-    soundEvent: RemoteEvent,
-    foodModel: BasePart,
-    changePlayerPoints: (value: number) -> (),
+export type ItemSpawner = {
+	changePlayerPoints: (value: number) -> ()?, 
+	playerMoney: IntValue,
+	spawnerObject: BasePart | Model,
+	itemObject: BasePart | Model,
 }
 
-export type MoneySpawner = {
-    playerMoney: IntValue,
-    moneySpawnerModel: Model | Folder,
-    soundEvent: RemoteEvent,
-    moneyModel: BasePart,
+export type FoodSpawner = ItemSpawner & {
+}
+
+export type MoneySpawner = ItemSpawner & {
 }
 
 export type Warden = {

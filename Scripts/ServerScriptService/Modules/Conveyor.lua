@@ -4,8 +4,8 @@ local modules = game.ServerScriptService.Modules
 local utils = require(game.ReplicatedStorage.Utils)
 local sounds = require(reModules.Sounds)
 
-local dataTypes = require(game.ServerScriptService.DataTypes)
-local types = require(game.ServerScriptService.Types)
+local dataTypes = require(game.ReplicatedStorage.DataTypes)
+local types = require(game.ReplicatedStorage.Types)
 
 local data: dataTypes.Conveyor
 local conveyor: types.Conveyor
@@ -29,6 +29,12 @@ function spawnItem()
 end
 
 function activateConveyor(isOn: boolean)
+
+	if stateValues.liquidLevelIsFull.Value or not stateValues.isWorking.Value or stateValues.dailyNorm == 0 then 
+		-- message()
+		return 
+	end
+
 	data.soundEvent:FireAllClients(sounds.conveyor)
 	local goal = {Position = conveyor.door.Position + Vector3.new(0, conveyor.door.Size.Y * (isOn and 1 or -1), 0)}
 	utils.tween(conveyor.door, goal)
@@ -42,6 +48,12 @@ function changeLiquidColor(liquidColor: BrickColor)
 end
 
 function changeLevel(isFull: boolean)
+
+	if stateValues.conveyourIsOn.Value or not stateValues.isWorking.Value or stateValues.dailyNorm == 0 then 
+		-- message()
+		return 
+	end
+
 	data.soundEvent:FireAllClients(sounds.liquidLevel)
 	conveyor.levelButton.BrickColor = isFull and BrickColor.Green() or BrickColor.Red()
 	local full = Vector3.new(31, 15, 31)
@@ -53,9 +65,10 @@ function changeLevel(isFull: boolean)
 		}
 	)
 	for i, v in workspace:GetPartsInPart(conveyor.liquid) do 
-		v.BrickColor = conveyor.liquid.BrickColor
+		if v:IsA('Part') then
+			v.BrickColor = conveyor.liquid.BrickColor
+		end
 	end
-
 	-- add some equipment like a gun
 end
 

@@ -26,6 +26,12 @@ export type MoneySpawner = {
     moneyFolder: Folder,
 }
 
+export type WardenPath = {
+	Conveyor: Part,
+	Exit: Part,
+	Seat: Part,
+}
+
 export type Warden = {
 	model: Model,
 	humanoid: Humanoid,
@@ -41,6 +47,7 @@ export type ColorLevels = {
 		colorLevel: IntValue,
 	}
 }
+
 
 export type InteractObject = {
 	Attachment: Attachment & {

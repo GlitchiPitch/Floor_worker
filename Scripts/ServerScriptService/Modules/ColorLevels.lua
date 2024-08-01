@@ -3,8 +3,8 @@ local reModules = game.ReplicatedStorage.Modules
 local utils = require(game.ReplicatedStorage.Utils)
 local sounds = require(reModules.Sounds)
 
-local dataTypes = require(game.ServerScriptService.DataTypes)
-local types = require(game.ServerScriptService.Types)
+local dataTypes = require(game.ReplicatedStorage.DataTypes)
+local types = require(game.ReplicatedStorage.Types)
 
 local data: dataTypes.ColorLevels
 local colorLevels: types.ColorLevels = {}
