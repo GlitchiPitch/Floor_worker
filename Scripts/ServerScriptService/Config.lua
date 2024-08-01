@@ -1,8 +1,8 @@
 local colorList = {
-	BrickColor.new('Persimmon'),
-	BrickColor.new('Gold'),
-	BrickColor.new('Cyan'),
-	BrickColor.new('Magenta'),
+	BrickColor.new(21),
+	BrickColor.new(28),
+	BrickColor.new(24),
+	BrickColor.new(104),
 }
 
 return {

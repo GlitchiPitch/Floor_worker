@@ -4,7 +4,7 @@ local modules = game.ServerScriptService.Modules
 local config 	= require(game.ServerScriptService.Config)
 local dataTypes = require(game.ReplicatedStorage.DataTypes)
 local types 	= require(game.ReplicatedStorage.Types)
-local bubbles 	= require(game.ServerScriptService.Bubbles)
+local bubbles 	= require(game.ReplicatedStorage.Bubbles)
 
 local moneySpawner 	= require(modules.MoneySpawner)
 local foodSpawner 	= require(modules.FoodSpawner)

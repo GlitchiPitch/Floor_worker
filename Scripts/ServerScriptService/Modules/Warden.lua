@@ -8,7 +8,7 @@ local types = require(game.ReplicatedStorage.Types)
 local warden: types.Warden
 local data: dataTypes.Warden
 
-local bubbles 	= require(game.ServerScriptService.Bubbles).wardenBubbles
+local bubbles 	= require(game.ReplicatedStorage.Bubbles).wardenBubbles
 
 local movePoints: {
 	conveyor: Vector3,

@@ -3,7 +3,8 @@ local reModules = game.ReplicatedStorage.Modules
 local modules = game.ServerScriptService.Modules
 local utils = require(game.ReplicatedStorage.Utils)
 local sounds = require(reModules.Sounds)
-
+local events = game.ReplicatedStorage.Events
+local bubbleEvent = events.Bubble
 local dataTypes = require(game.ReplicatedStorage.DataTypes)
 local types = require(game.ReplicatedStorage.Types)
 
@@ -16,6 +17,22 @@ local stateValues: {
 	isWorking: BoolValue,
 	dailyNorm: IntValue,
 }
+
+function checkStates(checkedStates: {[string]: boolean | number})
+	print(checkedStates)
+	for stateName, value in checkedStates do
+		if stateValues[stateName].Value == value then 
+			bubbleEvent:FireAllClients(nil, stateName)
+			return false
+		end
+	end
+
+	if not stateValues.isWorking.Value or stateValues.dailyNorm.Value == 0 then
+		return false
+	end
+
+	return true
+end
 
 function spawnItem()
 	local item = data.spawnedItems:Clone() :: Model
@@ -30,9 +47,10 @@ end
 
 function activateConveyor(isOn: boolean)
 
-	if stateValues.liquidLevelIsFull.Value or not stateValues.isWorking.Value or stateValues.dailyNorm == 0 then 
-		-- message()
-		return 
+	if not checkStates({
+		liquidLevelIsFull = true,
+	}) then
+		return
 	end
 
 	data.soundEvent:FireAllClients(sounds.conveyor)
@@ -49,9 +67,10 @@ end
 
 function changeLevel(isFull: boolean)
 
-	if stateValues.conveyourIsOn.Value or not stateValues.isWorking.Value or stateValues.dailyNorm == 0 then 
-		-- message()
-		return 
+	if not checkStates({
+		conveyourIsOn = true,
+	}) then
+		return
 	end
 
 	data.soundEvent:FireAllClients(sounds.liquidLevel)
@@ -85,9 +104,12 @@ end
 function setupGetButton()
 	local detector: ClickDetector = conveyor.getButton.ClickDetector
 	detector.MouseClick:Connect(function()
-		if stateValues.liquidLevelIsFull.Value or stateValues.conveyourIsOn.Value or not stateValues.isWorking.Value or stateValues.dailyNorm == 0 then 
-			-- message()
-			return 
+
+		if not checkStates({
+			liquidLevelIsFull = true,
+			conveyourIsOn = true,
+		}) then
+			return
 		end
 
 		data.soundEvent:FireAllClients(sounds.getFood)
@@ -95,11 +117,10 @@ function setupGetButton()
 	end)
 end
 
-function setupClicker(clickedObject: Instance, checkedValue: BoolValue, changedValue: BoolValue, callback: (boolean) -> ())
+function setupClicker(clickedObject: Instance, checkedValue: string, changedValue: BoolValue, callback: (boolean) -> ())
 	local detector: ClickDetector = clickedObject.ClickDetector
 	detector.MouseClick:Connect(function()
-		if checkedValue.Value == true or not stateValues.isWorking.Value then 
-			-- message('something wrong')
+		if not checkStates({[checkedValue] = true}) then 
 			return 
 		end
 		
@@ -178,8 +199,8 @@ function init(conveyor_: Folder, data_)
 	setupGetButton()
 	changeCurrentColor()
 	
-	setupClicker(conveyor.pushButton, stateValues.liquidLevelIsFull, stateValues.conveyourIsOn, activateConveyor)
-	setupClicker(conveyor.levelButton, stateValues.conveyourIsOn, stateValues.liquidLevelIsFull, changeLevel)
+	setupClicker(conveyor.pushButton, 'liquidLevelIsFull', stateValues.conveyourIsOn, activateConveyor)
+	setupClicker(conveyor.levelButton, 'conveyourIsOn', stateValues.liquidLevelIsFull, changeLevel)
 
 	data.bindEvent.Event:Connect(conveyorEvents)
 	conveyor.checingkGate.Touched:Connect(setupCheckingGate)

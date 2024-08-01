@@ -15,6 +15,10 @@ local wardenBubbles = {
 local playerBubbles = {
 	hungry = "I'm hungry i need to take a bread from that hole",
 	zeroChemicals = "I have no chemicals, let's take them near the screen",
+	liquidLevelIsFull = 'liquid level is full turn off it',
+	conveyourIsOn = 'conveyour is on turn off it',
+	isWorking = 'conveyor is broken',
+	dailyNorm = 'daily norm was reached, need go to sleep',
 }
 
 local mood = {
